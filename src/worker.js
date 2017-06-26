@@ -62,7 +62,9 @@ class Worker {
     static async run({ task, rootPath, outputFile } = {}) {
         const output = fs.createWriteStream(outputFile);
 
+        debug('Start gathering directory tree');
         const tree = dirTree(rootPath);
+        debug('Tree completed');
         flatten(tree.children).filter((file) => {
             return file.valid !== true;
         }).forEach((file) => {
