@@ -1,0 +1,22 @@
+{
+  "name": "file-normalizer",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "DEBUG=app NODE_PATH=./src node -r babel-register bin/app.js",
+    "test": "npm start print test/fixtures/root"
+  },
+  "dependencies": {
+    "babel-plugin-transform-async-to-generator": "^6.24.1",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.24.1",
+    "babel-register": "^6.24.1",
+    "debug": "^2.6.8",
+    "directory-tree": "^2.0.0",
+    "fs-extra": "^3.0.1"
+  },
+  "babel": {
+    "plugins": [
+      "transform-es2015-modules-commonjs",
+      "transform-async-to-generator"
+    ]
+  }
+}
