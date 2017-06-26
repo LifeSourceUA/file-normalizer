@@ -3,6 +3,7 @@ import Worker from 'worker';
 // Parse console args
 const task = process.argv[2];
 const rootPath = process.argv[3];
+const outputFile = process.argv[4] ? process.argv[4] : 'output.txt';
 
 // Check task
 const allowedTasks = [
@@ -22,7 +23,8 @@ if (!rootPath) {
 
 Worker.run({
     task,
-    rootPath
+    rootPath,
+    outputFile
 }).catch((error) => {
     console.error(error);
 });

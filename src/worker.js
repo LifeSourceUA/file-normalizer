@@ -59,8 +59,8 @@ function flatten(files) {
 }
 
 class Worker {
-    static async run({ task, rootPath } = {}) {
-        const output = fs.createWriteStream('output.txt');
+    static async run({ task, rootPath, outputFile } = {}) {
+        const output = fs.createWriteStream(outputFile);
 
         const tree = dirTree(rootPath);
         flatten(tree.children).filter((file) => {
