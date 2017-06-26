@@ -1,0 +1,20 @@
+version: "1.0"
+
+steps:
+  Build:
+    title: Docker Image Build
+    type: build
+    image_name: file-normalizer
+    working_directory: ./
+    dockerfile: Dockerfile
+
+  Push:
+    title: Pushing to Docker Registry
+    type: push
+    candidate: "${{Build}}"
+    tag: latest
+    registry: azure
+    when:
+      branch:
+        only:
+          - "master"
