@@ -10,7 +10,6 @@
     "babel-plugin-transform-es2015-modules-commonjs": "^6.24.1",
     "babel-register": "^6.24.1",
     "debug": "^2.6.8",
-    "directory-tree": "^2.0.0",
     "fs-extra": "^3.0.1"
   },
   "babel": {

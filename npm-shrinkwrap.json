@@ -142,11 +142,6 @@
       "from": "detect-indent@>=4.0.0 <5.0.0",
       "resolved": "https://registry.npmjs.org/detect-indent/-/detect-indent-4.0.0.tgz"
     },
-    "directory-tree": {
-      "version": "2.0.0",
-      "from": "directory-tree@>=2.0.0 <3.0.0",
-      "resolved": "https://registry.npmjs.org/directory-tree/-/directory-tree-2.0.0.tgz"
-    },
     "escape-string-regexp": {
       "version": "1.0.5",
       "from": "escape-string-regexp@>=1.0.2 <2.0.0",

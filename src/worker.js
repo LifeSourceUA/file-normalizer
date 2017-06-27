@@ -1,5 +1,5 @@
-import dirTree from 'directory-tree';
 import fs from 'fs-extra';
+import path from 'path';
 import Debug from 'debug';
 const debug = Debug('app');
 
@@ -37,37 +37,75 @@ function isValid(file) {
     return true;
 }
 
-function flatten(files, level = 0) {
-    let flatList = [];
+function safeReadDirSync (rootPath) {
+    let dirData = {};
+    try {
+        dirData = fs.readdirSync(rootPath);
+    } catch(ex) {
+        if (ex.code == "EACCES")
+        //User does not have permissions, ignore directory
+            return null;
+        else throw ex;
+    }
+    return dirData;
+}
 
-    files.forEach((file) => {
-        // debug(`Processing ${file.type}: ${file.path}`);
+function directoryLoop(rootPath, cb) {
+    const name = path.basename(rootPath);
+    const item = {
+        path: rootPath,
+        name
+    };
+    let stats;
 
-        flatList.push({
-            path: file.path,
-            name: file.name,
-            size: file.size,
-            type: file.type,
-            valid: isValid(file)
-        });
+    try { stats = fs.statSync(rootPath); }
+    catch (e) { return null; }
 
-        if (file.type === 'directory' && Array.isArray(file.children)) {
-            debug(`Go deep => ${level+1}`);
-            flatList.push(...flatten(file.children, level + 1));
+    if (stats.isFile()) {
+
+        const ext = path.extname(rootPath).toLowerCase();
+
+        item.size = stats.size;  // File size in bytes
+        item.extension = ext;
+        item.type = 'file';
+        if (cb) {
+            cb(item);
         }
-    });
+    }
+    else if (stats.isDirectory()) {
+        let dirData = safeReadDirSync(rootPath);
+        if (dirData === null) return null;
 
-    return flatList;
+        item.children = dirData
+            .map(child => directoryLoop(path.join(rootPath, child), cb))
+            .filter(e => !!e);
+        item.size = item.children.reduce((prev, cur) => prev + cur.size, 0);
+        item.type = 'directory';
+
+        if (cb) {
+            cb(item);
+        }
+    } else {
+        return null; // Or set item.size = 0 for devices, FIFO and sockets ?
+    }
+    return item;
 }
 
 class Worker {
     static async run({ task, rootPath, outputFile } = {}) {
         const output = fs.createWriteStream(outputFile);
 
-        debug('Start gathering directory tree');
-        const tree = dirTree(rootPath);
-        debug('Tree completed');
-        flatten(tree.children).filter((file) => {
+        const fileList = [];
+        directoryLoop(rootPath, (file) => {
+            return fileList.push({
+                path: file.path,
+                name: file.name,
+                size: file.size,
+                type: file.type,
+                valid: isValid(file)
+            });
+        });
+        fileList.filter((file) => {
             return file.valid !== true;
         }).forEach((file) => {
             output.write(`${file.valid}\t${file.path}\n`);
