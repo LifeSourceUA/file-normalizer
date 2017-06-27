@@ -37,9 +37,11 @@ function isValid(file) {
     return true;
 }
 
-function flatten(files) {
-    return files.reduce((flatList, file) => {
-        debug(`Processing ${file.type}: ${file.path}`);
+function flatten(files, level = 0) {
+    let flatList = [];
+
+    files.forEach((file) => {
+        // debug(`Processing ${file.type}: ${file.path}`);
 
         flatList.push({
             path: file.path,
@@ -50,12 +52,12 @@ function flatten(files) {
         });
 
         if (file.type === 'directory' && Array.isArray(file.children)) {
-            debug('Go deep');
-            flatList.push(...flatten(file.children));
+            debug(`Go deep => ${level+1}`);
+            flatList.push(...flatten(file.children, level + 1));
         }
+    });
 
-        return flatList;
-    }, []);
+    return flatList;
 }
 
 class Worker {
