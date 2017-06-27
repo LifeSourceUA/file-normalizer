@@ -29,7 +29,7 @@ function isValid(file) {
     }
 
     // Фильтр на допустимые символы
-    const symbolsExp = /^[a-zA-Zа-яА-Я0-9.\-_]+$/g;
+    const symbolsExp = /^[a-zA-Zа-яА-Я0-9.\-_ ]+$/g;
     if (!symbolsExp.test(file.name)) {
         return validations.SYMBOLS;
     }
