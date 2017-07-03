@@ -29,7 +29,7 @@ function isValid(file) {
     }
 
     // Фильтр на допустимые символы
-    const symbolsExp = /^[a-zA-Zа-яА-Я0-9.,\-_() ]+$/g;
+    const symbolsExp = /^[a-zA-Zа-яА-ЯёїієЇІЄ0-9.,\-_()+!\[\]№ ]+$/g;
     if (!symbolsExp.test(file.name)) {
         return validations.SYMBOLS;
     }
@@ -108,7 +108,19 @@ class Worker {
         fileList.filter((file) => {
             return file.valid !== true;
         }).forEach((file) => {
-            output.write(`${file.valid}\t${file.path}\n`);
+            switch (task) {
+                case 'print':
+                    output.write(`${file.valid}\t${file.path}\n`);
+                    break;
+                case 'clean':
+                    if (file.valid === validations.EMPTY_FILE) {
+                        fs.unlinkSync(file.path);
+                        output.write(`${file.path} removed\n`);
+                    }
+                    break;
+                case 'rename':
+                    break;
+            }
         });
     }
 }
