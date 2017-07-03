@@ -29,8 +29,9 @@ function isValid(file) {
     }
 
     // Фильтр на допустимые символы
-    const symbolsExp = /^[a-zA-Zа-яА-ЯёїієЇІЄ0-9.,\-_()+!\[\]№ ]+$/g;
-    if (!symbolsExp.test(file.name)) {
+    // const symbolsExp = /^[a-zA-Zа-яА-ЯёїієЇІЄ0-9.,\-_()+!\[\]№ ]+$/g;
+    const symbolsExp = /["#%*:<>?/|\\]/g;
+    if (symbolsExp.test(file.name)) {
         return validations.SYMBOLS;
     }
 
@@ -113,9 +114,24 @@ class Worker {
                     output.write(`${file.valid}\t${file.path}\n`);
                     break;
                 case 'clean':
-                    if (file.valid === validations.EMPTY_FILE || file.valid === validations.EMPTY_DIR) {
+                    if (file.valid === validations.EMPTY_FILE) {
                         fs.unlinkSync(file.path);
-                        output.write(`${file.path} removed\n`);
+                        output.write(`File ${file.path} removed\n`);
+                    }
+
+                    if (file.valid === validations.EMPTY_DIR) {
+                        fs.rmdirSync(file.path);
+                        output.write(`Dir ${file.path} removed\n`);
+                    }
+
+                    if (file.valid === validations.DOT) {
+                        if (file.type === 'file') {
+                            fs.unlinkSync(file.path);
+                            output.write(`Dot file ${file.path} removed\n`);
+                        } else {
+                            fs.rmdirSync(file.path);
+                            output.write(`Dot dir ${file.path} removed\n`);
+                        }
                     }
                     break;
                 case 'rename':
