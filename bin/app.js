@@ -8,6 +8,7 @@ const outputFile = process.argv[4] ? process.argv[4] : 'output.txt';
 // Check task
 const allowedTasks = [
     'print',
+    'clean',
     'normalize'
 ];
 if (allowedTasks.indexOf(task) === -1) {
