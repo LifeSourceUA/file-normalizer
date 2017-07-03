@@ -136,8 +136,14 @@ class Worker {
                         }
                     }
                     if (file.valid === validations.SYMBOLS) {
-                        fs.renameSync(file.path, file.path.replace(symbolsExp, '_'));
-                        output.write(`${file.path} renamed => ${file.path.replace(symbolsExp, '_')}\n`);
+                        const newFilePath = file.path.split('/').map((item, index, parts) => {
+                            if (index === parts.length - 1) {
+                                return item.replace(symbolsExp, '_');
+                            }
+                            return item;
+                        }).join('/');
+                        fs.renameSync(file.path, newFilePath);
+                        output.write(`${file.path} renamed => ${newFilePath}\n`);
                     }
                     break;
                 case 'rename':
