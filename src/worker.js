@@ -113,7 +113,7 @@ class Worker {
                     output.write(`${file.valid}\t${file.path}\n`);
                     break;
                 case 'clean':
-                    if (file.valid === validations.EMPTY_FILE) {
+                    if (file.valid === validations.EMPTY_FILE || file.valid === validations.EMPTY_DIR) {
                         fs.unlinkSync(file.path);
                         output.write(`${file.path} removed\n`);
                     }
