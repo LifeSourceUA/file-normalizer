@@ -106,7 +106,7 @@ class Worker {
         });
 
         const output = fs.createWriteStream(outputFile);
-        const symbolsExp = /["#%*:<>?/|\\]/g;
+        const symbolsExp = /["#%*:<>?|\\]/g;
 
         fileList.filter((file) => {
             return file.valid !== true;
