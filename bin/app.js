@@ -9,7 +9,8 @@ const outputFile = process.argv[4] ? process.argv[4] : 'output.txt';
 const allowedTasks = [
     'print',
     'clean',
-    'normalize'
+    'normalize',
+    'rename'
 ];
 if (allowedTasks.indexOf(task) === -1) {
     console.error(`Task "${task}" is not defined`);

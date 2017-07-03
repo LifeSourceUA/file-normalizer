@@ -106,6 +106,7 @@ class Worker {
         });
 
         const output = fs.createWriteStream(outputFile);
+        const symbolsExp = /["#%*:<>?/|\\]/g;
 
         fileList.filter((file) => {
             return file.valid !== true;
@@ -133,6 +134,10 @@ class Worker {
                             fs.rmdirSync(file.path);
                             output.write(`Dot dir ${file.path} removed\n`);
                         }
+                    }
+                    if (file.valid === validations.SYMBOLS) {
+                        fs.renameSync(file.path, file.path.replace(symbolsExp, '_'));
+                        output.write(`${file.path} renamed => ${file.path.replace(symbolsExp, '_')}\n`);
                     }
                     break;
                 case 'rename':
