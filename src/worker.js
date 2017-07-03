@@ -94,8 +94,6 @@ function directoryLoop(rootPath, cb) {
 
 class Worker {
     static async run({ task, rootPath, outputFile } = {}) {
-        const output = fs.createWriteStream(outputFile);
-
         const fileList = [];
         directoryLoop(rootPath, (file) => {
             return fileList.push({
@@ -106,6 +104,9 @@ class Worker {
                 valid: isValid(file)
             });
         });
+
+        const output = fs.createWriteStream(outputFile);
+
         fileList.filter((file) => {
             return file.valid !== true;
         }).forEach((file) => {
