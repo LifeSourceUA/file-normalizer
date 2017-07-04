@@ -116,35 +116,40 @@ class Worker {
                     output.write(`${file.valid}\t${file.path}\n`);
                     break;
                 case 'clean':
-                    if (file.valid === validations.EMPTY_FILE) {
-                        fs.unlinkSync(file.path);
-                        output.write(`File ${file.path} removed\n`);
-                    }
-
-                    if (file.valid === validations.EMPTY_DIR) {
-                        fs.rmdirSync(file.path);
-                        output.write(`Dir ${file.path} removed\n`);
-                    }
-
-                    if (file.valid === validations.DOT) {
-                        if (file.type === 'file') {
+                    try {
+                        if (file.valid === validations.EMPTY_FILE) {
                             fs.unlinkSync(file.path);
-                            output.write(`Dot file ${file.path} removed\n`);
-                        } else {
-                            fs.rmdirSync(file.path);
-                            output.write(`Dot dir ${file.path} removed\n`);
+                            output.write(`File ${file.path} removed\n`);
                         }
-                    }
-                    if (file.valid === validations.SYMBOLS) {
-                        const newFilePath = file.path.split('/').map((item, index, parts) => {
-                            if (index === parts.length - 1) {
-                                return item.replace(symbolsExp, '_');
+
+                        if (file.valid === validations.EMPTY_DIR) {
+                            fs.rmdirSync(file.path);
+                            output.write(`Dir ${file.path} removed\n`);
+                        }
+
+                        if (file.valid === validations.DOT) {
+                            if (file.type === 'file') {
+                                fs.unlinkSync(file.path);
+                                output.write(`Dot file ${file.path} removed\n`);
+                            } else {
+                                fs.rmdirSync(file.path);
+                                output.write(`Dot dir ${file.path} removed\n`);
                             }
-                            return item;
-                        }).join('/');
-                        fs.renameSync(file.path, newFilePath);
-                        output.write(`${file.path} renamed => ${newFilePath}\n`);
+                        }
+                        if (file.valid === validations.SYMBOLS) {
+                            const newFilePath = file.path.split('/').map((item, index, parts) => {
+                                if (index === parts.length - 1) {
+                                    return item.replace(symbolsExp, '_');
+                                }
+                                return item;
+                            }).join('/');
+                            fs.renameSync(file.path, newFilePath);
+                            output.write(`${file.path} renamed => ${newFilePath}\n`);
+                        }
+                    } catch (error) {
+                        output.write(`Error ${file.path}: ${error.message}`);
                     }
+
                     break;
                 case 'rename':
                     break;
